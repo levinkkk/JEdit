@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import javax.swing.BorderFactory;
-import javax.swing.JEditorPane;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
@@ -31,6 +31,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.text.Document;
@@ -40,7 +41,9 @@ import javax.swing.text.Element;
 public class JEditFrame extends JFrame implements ActionListener {
 
 	private PageFormat pageFormat;
-	JEditorPane jedit;
+	//JEditorPane jedit;
+	
+	JTextArea jedit;
 
 	JLabel backgroundlabel;
 
@@ -62,7 +65,8 @@ public class JEditFrame extends JFrame implements ActionListener {
 			new JMenuItem("查找"), new JMenuItem("查找下一个"), new JMenuItem("替换"),
 			new JMenuItem("转到"), new JMenuItem("全选"), new JMenuItem("时间/日期") };
 
-	JMenuItem[] menuItem2 = { new JMenuItem("自动转换"), new JMenuItem("字体") };
+	JCheckBoxMenuItem jcitm =new JCheckBoxMenuItem("自动换行");
+	JMenuItem  fontItm =  new JMenuItem("字体") ;
 
 	JMenuItem[] menuItem3 = { new JMenuItem("状态栏") };
 
@@ -79,16 +83,19 @@ public class JEditFrame extends JFrame implements ActionListener {
 	private int visblesta = 0;
 	
 	private JTextArea jt=new JTextArea();
+	
+	private JScrollPane js=new JScrollPane(jedit);
+	
+	//private JScrollPane jst=new JScrollPane(jt);
 
 	public JEditFrame() {
 
-		jedit = new JEditorPane();
+		jedit = new JTextArea();
 		jedit.addKeyListener(new   KeyAdapter()   { 
 			public   void   keyPressed(KeyEvent   e)   
 		    {   
 		     if(e.getKeyCode() == KeyEvent.VK_ENTER) 
 		     {
-		    	
 		    	 try{
 		    		    Document doc = jedit.getDocument();
 
@@ -106,6 +113,13 @@ public class JEditFrame extends JFrame implements ActionListener {
 		    			stateLabel.setText(" TotalLines: " + totalLines + " Line: " + (line + 1)
 		    					+ " Column: " + Column);
 
+		    			String ss="";
+		    			for(int k=0;k<=totalLines;k++)
+		    			{
+		    				ss+=k+"\n";
+		    				
+		    			}
+		    			jt.setText(ss);
 		    			int startingIndex = lineElement.getStartOffset();
 		    			int endingIndex = lineElement.getEndOffset();
 		    			
@@ -137,7 +151,7 @@ public class JEditFrame extends JFrame implements ActionListener {
 		    				}
 		    				//jedit.setText(jedit.getText()+"\n"+xx);   
 		    				line=line+1;
-		    				jt.setText(jt.getText()+"\n"+line);
+		    				//jt.setText(jt.getText()+"\n"+line);
 		    			} catch (Exception ex) {
 		    				ex.printStackTrace();
 		    			}
@@ -165,9 +179,12 @@ public class JEditFrame extends JFrame implements ActionListener {
 		stateLabel.setVisible(false);
 		stateLabel.setBorder(BorderFactory.createLoweredBevelBorder());
 		stateLabel.setText(" TotalLines: 1 Line: 1 Column: 1");
+		js.setAutoscrolls(true);
+		js.setViewportView(jedit);
+		//jSt.setAutoscrolls(false);
 		contentpane = this.getContentPane();
 		contentpane.setLayout(new BorderLayout());
-		contentpane.add(jedit, BorderLayout.CENTER);
+		contentpane.add(js, BorderLayout.CENTER);
 		contentpane.add(stateLabel, BorderLayout.SOUTH);
 		contentpane.add(jt, BorderLayout.WEST);
 		Menu();
@@ -196,10 +213,10 @@ public class JEditFrame extends JFrame implements ActionListener {
 			}
 			menuItem1[i].addActionListener(this);
 		}
-		for (int i = 0; i < menuItem2.length; i++) {
-			menu[2].add(menuItem2[i]);
-			menuItem2[i].addActionListener(this);
-		}
+			menu[2].add(jcitm);
+			menu[2].add(fontItm);
+			jcitm.addActionListener(this);
+			fontItm.addActionListener(this);
 		for (int i = 0; i < menuItem3.length; i++) {
 			menu[3].add(menuItem3[i]);
 			menuItem3[i].addActionListener(this);
@@ -212,32 +229,28 @@ public class JEditFrame extends JFrame implements ActionListener {
 		menuItem1[1].setEnabled(false);
 		menuItem1[2].setEnabled(false);
 		menuItem1[4].setEnabled(false);
+		menuItem1[8].setEnabled(false);
 
 		menuItem[0].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,ActionEvent.CTRL_MASK));
 		menuItem[1].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O,ActionEvent.CTRL_MASK));
 		menuItem[2].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,ActionEvent.CTRL_MASK));
 		menuItem[3].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A,ActionEvent.ALT_MASK));
 		menuItem[4].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U,ActionEvent.CTRL_MASK));
-		menuItem[5].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P,ActionEvent.CTRL_MASK));
+		menuItem[5].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P,ActionEvent.ALT_MASK));
 		menuItem[6].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X,ActionEvent.ALT_MASK));
-
 		menuItem1[0].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z,ActionEvent.CTRL_MASK));
 		menuItem1[1].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X,ActionEvent.CTRL_MASK));
 		menuItem1[2].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,ActionEvent.CTRL_MASK));
 		menuItem1[3].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V,ActionEvent.CTRL_MASK));
-		menuItem1[4].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,ActionEvent.CTRL_MASK));
+		menuItem1[4].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,0));
 		menuItem1[5].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P,ActionEvent.CTRL_MASK));
-		menuItem1[6].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F3,ActionEvent.CTRL_MASK));
+		menuItem1[6].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F3,0));
 		menuItem1[7].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H,ActionEvent.CTRL_MASK));
 		menuItem1[8].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G,ActionEvent.CTRL_MASK));
 		menuItem1[9].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A,ActionEvent.CTRL_MASK));
 		menuItem1[10].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D,ActionEvent.CTRL_MASK));
-
-		menuItem2[0].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W,ActionEvent.CTRL_MASK));
-		menuItem2[1].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F,ActionEvent.CTRL_MASK));
-
+		fontItm.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F,ActionEvent.CTRL_MASK));
 		menuItem3[0].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,ActionEvent.CTRL_MASK));
-
 		menuItem4[0].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H,ActionEvent.CTRL_MASK));
 		menuItem4[1].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A,ActionEvent.ALT_MASK));
 	}
@@ -245,8 +258,8 @@ public class JEditFrame extends JFrame implements ActionListener {
 	private void mainFrameInfo()// 界面信息
 	{
 		this.setTitle("记事本");
-		this.setLocation((screenSize.width - this.getWidth()) / 8,
-				(screenSize.height - this.getHeight()) / 12);
+		this.setLocation((screenSize.width - this.getWidth()) / 4,
+				(screenSize.height - this.getHeight()) / 6);
 		this.setSize(800, 600);
 		this.setResizable(true); // 可以设置最大化
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -424,16 +437,12 @@ public class JEditFrame extends JFrame implements ActionListener {
 			JEditFindDialog findDlg = new JEditFindDialog(this, jedit);
 			findDlg.setTitle("查找");
 			findDlg.setSize(280, 60);
-			findDlg.setLocation((screenSize.width - this.getWidth()) / 2,
-					(screenSize.height - this.getHeight()) / 2);
 			findDlg.setVisible(true);
 		}
 		if (e.getSource() == menuItem1[6]) {
 			JEditFindDialog findDlg = new JEditFindDialog(this, jedit);
 			findDlg.setTitle("查找替换");
 			findDlg.setSize(280, 110);
-			findDlg.setLocation((screenSize.width - this.getWidth()) / 2,
-					(screenSize.height - this.getHeight()) / 2);
 			findDlg.setVisible(true);
 		}
 		if (e.getSource() == menuItem1[9]) {
@@ -446,6 +455,19 @@ public class JEditFrame extends JFrame implements ActionListener {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			jedit.setText(jedit.getText() + sdf.format(Nowtime));
 		}
+		if (e.getSource() == jcitm) {
+			if(jcitm.getState()==true)
+			{
+			  jedit.setLineWrap(true);
+			}else
+			{
+			  jedit.setLineWrap(false);
+			}
+		}
+		if (e.getSource() == fontItm) {
+			JEditFont fontdialog=new JEditFont(jedit);
+			fontdialog.setVisible(true);
+		}
 		if (e.getSource() == menuItem3[0]) {
 			if (visblesta == 0) {
 				stateLabel.setVisible(true);
@@ -454,6 +476,21 @@ public class JEditFrame extends JFrame implements ActionListener {
 				stateLabel.setVisible(false);
 				visblesta = 0;
 			}
+		}
+		if(e.getSource()==menuItem4[0])
+		{
+			try {
+				Runtime.getRuntime().exec("hh.exe res/help.doc"); // 打开帮助文档
+			} catch (Exception r) {
+				r.printStackTrace();
+			}
+		}
+		
+		if(e.getSource()==menuItem4[1])
+		{
+			JOptionPane.showMessageDialog(this, "欢迎使用本记事本，如有不懂，请看帮助？" + "\n"
+					+ "本软件暂时功能不齐全，正在完善。" + "\n" + "版权所有！仅供学习所用！", "关于记事本",
+					JOptionPane.INFORMATION_MESSAGE);
 		}
 
 	}
